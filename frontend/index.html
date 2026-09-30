@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevLog - Blog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="#" class="brand-logo" id="nav-brand">
+        <span class="logo-icon">✨</span>
+        <span class="logo-text">Dev<span class="gradient-text">Log</span></span>
+        <span class="badge">v2.0</span>
+      </a>
+      <nav class="nav-links">
+        <button class="nav-btn" id="btn-nav-list">
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+          </svg>
+          Explorar
+        </button>
+        <button class="btn btn-primary" id="btn-nav-new">
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+          Nuevo Post
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <main class="main-content">
+    <div class="container" id="app-container">
+
+      <section id="view-list" class="view-section">
+        <div class="hero-section">
+          <div class="hero-badge">🚀 Blog con Node.js & MongoDB</div>
+          <h1 class="hero-title">Historias, ideas y <span class="gradient-text">conocimiento</span></h1>
+          <p class="hero-subtitle">Descubre y comparte publicaciones con imágenes en el puerto 3001.</p>
+          <div class="hero-actions">
+            <button class="btn btn-primary btn-lg" id="btn-hero-new">
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+              </svg>
+              Crear nuevo artículo
+            </button>
+            <div class="posts-count-chip">
+              <span class="count-number" id="posts-count">0</span>
+              <span class="count-label">artículos</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="loading-spinner" class="spinner-container hidden">
+          <div class="spinner"></div>
+        </div>
+
+        <div id="empty-state" class="empty-state hidden">
+          <div class="empty-state-icon">📝</div>
+          <h3 class="empty-state-title">Aún no hay publicaciones</h3>
+          <p class="empty-state-desc">Sé el primero en compartir contenido e imágenes. Publica tu primer artículo ahora.</p>
+          <button class="btn btn-primary" id="btn-empty-new">Publicar primer post</button>
+        </div>
+
+        <div class="posts-grid" id="posts-grid"></div>
+      </section>
+
+      <section id="view-show" class="view-section hidden">
+        <div class="container-sm">
+          <div class="page-nav-back">
+            <button class="back-link" id="btn-back-to-list">
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Volver a todos los artículos
+            </button>
+          </div>
+          <article class="single-post-card">
+            <header class="single-post-header">
+              <div class="post-meta-details">
+                <span class="badge-category">Lectura</span>
+                <span class="meta-separator">•</span>
+                <span class="meta-date" id="show-post-date"></span>
+              </div>
+              <h1 class="single-post-title" id="show-post-title"></h1>
+            </header>
+            <div id="show-post-image-container" class="single-post-image-container hidden">
+              <img id="show-post-image" class="single-post-image" src="" alt="Imagen de portada">
+            </div>
+            <div class="single-post-content" id="show-post-content"></div>
+            <footer class="single-post-footer">
+              <div class="action-buttons-group">
+                <button class="btn btn-secondary" id="btn-show-edit">
+                  <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                  Editar artículo
+                </button>
+                <button class="btn btn-danger" id="btn-show-delete">
+                  <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                  Eliminar
+                </button>
+              </div>
+              <button class="btn btn-outline" id="btn-show-another">Escribir otro artículo</button>
+            </footer>
+          </article>
+        </div>
+      </section>
+
+      <section id="view-new" class="view-section hidden">
+        <div class="container-sm">
+          <div class="page-nav-back">
+            <button class="back-link" id="btn-cancel-new">
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Cancelar y volver
+            </button>
+          </div>
+          <div class="form-card">
+            <div class="form-header">
+              <div class="form-icon-badge">✍️</div>
+              <h1 class="form-title">Crear Nuevo Artículo</h1>
+              <p class="form-subtitle">Ingresa el título, contenido e imagen para publicarlo en la base de datos prueba2.</p>
+            </div>
+            <div id="new-error-box" class="alert-error hidden"></div>
+            <form id="form-new-post" class="post-form">
+              <div class="form-group">
+                <label for="new-title" class="form-label">Título de la publicación <span class="required-indicator">*</span></label>
+                <div class="input-wrapper">
+                  <input type="text" id="new-title" class="form-control" placeholder="Ejemplo: Arquitectura de Software con Node.js" required maxlength="150">
+                </div>
+                <div class="field-hint">
+                  <span>Sé descriptivo con tu título</span>
+                  <span id="new-title-counter" class="char-count">0/150</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="new-image" class="form-label">Imagen de portada (Opcional)</label>
+                <div class="file-upload-box">
+                  <input type="file" id="new-image" name="file0" accept="image/png, image/jpeg, image/jpg, image/gif, image/webp" class="file-input">
+                  <label for="new-image" class="file-upload-label">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span id="new-image-text">Haz clic para seleccionar o arrastra una imagen</span>
+                  </label>
+                </div>
+                <div id="new-image-preview" class="image-preview-wrapper hidden">
+                  <img id="new-preview-img" src="" alt="Vista previa">
+                  <button type="button" class="btn-remove-preview" id="btn-remove-new-image" title="Quitar imagen">✕</button>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="new-content" class="form-label">Contenido de la publicación <span class="required-indicator">*</span></label>
+                <textarea id="new-content" class="form-control form-textarea" rows="10" placeholder="Escribe el cuerpo del artículo..." required></textarea>
+                <div class="field-hint">
+                  <span id="new-content-counter">0 palabras</span>
+                  <span class="tip-badge">Soporta texto y saltos de línea</span>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn btn-outline" id="btn-new-discard">Descartar</button>
+                <button type="submit" class="btn btn-primary btn-lg" id="btn-new-submit">
+                  <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  Publicar artículo
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-edit" class="view-section hidden">
+        <div class="container-sm">
+          <div class="page-nav-back">
+            <button class="back-link" id="btn-cancel-edit">
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Cancelar edición
+            </button>
+          </div>
+          <div class="form-card">
+            <div class="form-header">
+              <div class="form-icon-badge">✏️</div>
+              <h1 class="form-title">Editar Artículo</h1>
+              <p class="form-subtitle">Modifica la información y actualiza el registro e imagen en la base de datos.</p>
+            </div>
+            <div id="edit-error-box" class="alert-error hidden"></div>
+            <form id="form-edit-post" class="post-form">
+              <input type="hidden" id="edit-id">
+              <div class="form-group">
+                <label for="edit-title" class="form-label">Título de la publicación <span class="required-indicator">*</span></label>
+                <div class="input-wrapper">
+                  <input type="text" id="edit-title" class="form-control" placeholder="Título del artículo" required maxlength="150">
+                </div>
+                <div class="field-hint">
+                  <span>Actualiza el título</span>
+                  <span id="edit-title-counter" class="char-count">0/150</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="edit-image" class="form-label">Cambiar imagen de portada</label>
+                <div class="file-upload-box">
+                  <input type="file" id="edit-image" name="file0" accept="image/png, image/jpeg, image/jpg, image/gif, image/webp" class="file-input">
+                  <label for="edit-image" class="file-upload-label">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span id="edit-image-text">Haz clic para cambiar la imagen actual</span>
+                  </label>
+                </div>
+                <div id="edit-image-preview" class="image-preview-wrapper hidden">
+                  <img id="edit-preview-img" src="" alt="Vista previa">
+                  <button type="button" class="btn-remove-preview" id="btn-remove-edit-image" title="Quitar imagen">✕</button>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="edit-content" class="form-label">Contenido de la publicación <span class="required-indicator">*</span></label>
+                <textarea id="edit-content" class="form-control form-textarea" rows="10" placeholder="Contenido del artículo..." required></textarea>
+                <div class="field-hint">
+                  <span id="edit-content-counter">0 palabras</span>
+                  <span class="tip-badge">Soporta texto y saltos de línea</span>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn btn-outline" id="btn-edit-discard">Cancelar</button>
+                <button type="submit" class="btn btn-primary btn-lg" id="btn-edit-submit">
+                  <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  Guardar Cambios
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <span class="logo-text">Dev<span class="gradient-text">Log</span></span>
+        <p class="footer-desc">Aplicación construida con Node.js, Express, MongoDB (prueba2) en el puerto 3001.</p>
+      </div>
+      <div class="footer-status">
+        <span class="status-indicator"></span>
+        <span class="status-text">Base de datos prueba2 conectada</span>
+      </div>
+      <div class="footer-copy">
+        &copy; 2026 DevLog. Todos los derechos reservados.
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
